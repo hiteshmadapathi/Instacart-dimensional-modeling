@@ -1,0 +1,24 @@
+-- Query to calculate the total number of products ordered per department:
+select d.department, count(op.product_id) number_of_products from fact_order_products op
+inner join dim_departments d on d.department_id = op.department_id
+group by d.department;
+
+-- Query to find the top 5 aisles with the highest number of reordered products:
+select top 5 aisle, count(*) number_of_reordered_products from fact_order_products op 
+inner join dim_aisles a on op.aisle_id = a.aisle_id
+where reordered=1
+group by aisle
+order by count(*) desc;
+
+-- Query to calculate the average number of products added to the cart per order by day of the week:
+select o.order_dow, avg(op.add_to_cart_order) avg_products_per_order from fact_order_products op
+join dim_orders o on op.order_id = o.order_id
+group by o.order_dow
+order by o.order_dow asc;
+
+-- Query to identify the top 10 users with the highest number of unique products ordered:
+select user_id,count(distinct product_id) distinct_products from fact_order_products 
+group by user_id
+order by distinct_products desc
+limit 10;
+
